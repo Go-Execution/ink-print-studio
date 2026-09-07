@@ -18,7 +18,7 @@ const INKS: Ink[] = [
 ];
 
 export function InkPicker() {
-  const [ink, setInk] = useState<Ink>(INKS[0]);
+  const [ink, setInk] = useState<Ink>(INKS[0]!);
 
   return (
     <div className="ticket relative bg-card p-4 sm:p-6">
