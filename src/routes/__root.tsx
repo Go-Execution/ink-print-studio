@@ -77,11 +77,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Unique Design Custom — Custom Printed Tees & Mugs" },
+      { title: "Unique Design Custom — Trendy Printed Tees & Mugs" },
       {
         name: "description",
         content:
-          "Upload your design, pick your ink, and we print it on tees and mugs. No minimums, fast turnaround.",
+          "Shop our exclusive collection of printed tees and mugs. Unique designs, premium quality, fast delivery.",
       },
       { name: "author", content: "Unique Design Custom" },
       { property: "og:type", content: "website" },
@@ -124,18 +124,21 @@ function RootShell({ children }: { children: ReactNode }) {
 
 import { CartProvider } from "../lib/CartContext";
 import { Layout } from "../components/Layout";
+import { AuthProvider } from "../lib/AuthContext";
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
   return (
     <QueryClientProvider client={queryClient}>
-      <CartProvider>
-        <Layout>
-          {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-          <Outlet />
-        </Layout>
-      </CartProvider>
+      <AuthProvider>
+        <CartProvider>
+          <Layout>
+            {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+            <Outlet />
+          </Layout>
+        </CartProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }

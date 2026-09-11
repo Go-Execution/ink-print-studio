@@ -2,6 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { useCart } from "@/lib/CartContext";
 import { CheckCircle2, ArrowLeft } from "lucide-react";
+import { collection, addDoc } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 
 export const Route = createFileRoute("/checkout")({
   component: Checkout,
@@ -10,12 +12,41 @@ export const Route = createFileRoute("/checkout")({
 function Checkout() {
   const { cartItems, cartTotal, clearCart } = useCart();
   const [isSuccess, setIsSuccess] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // In a real app, we would process payment here
-    clearCart();
-    setIsSuccess(true);
+    if (cartItems.length === 0) return;
+    
+    setIsSubmitting(true);
+    try {
+      const formData = new FormData(e.currentTarget);
+      const customer = {
+        email: formData.get("email"),
+        firstName: formData.get("firstName"),
+        lastName: formData.get("lastName"),
+        address: formData.get("address"),
+        city: formData.get("city"),
+        postalCode: formData.get("postalCode"),
+      };
+
+      const ordersRef = collection(db, "orders");
+      await addDoc(ordersRef, {
+        customer,
+        items: cartItems,
+        total: cartTotal > 50 ? cartTotal : cartTotal + 5,
+        status: "Pending",
+        createdAt: new Date().toISOString(),
+      });
+
+      clearCart();
+      setIsSuccess(true);
+    } catch (error) {
+      console.error("Error creating order:", error);
+      alert("There was an error placing your order. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (isSuccess) {
@@ -67,7 +98,7 @@ function Checkout() {
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-semibold mb-2">Email address</label>
-                  <input type="email" required className="w-full border border-hairline bg-transparent px-4 py-3 rounded outline-none focus:border-cobalt transition-colors" placeholder="you@example.com" />
+                  <input type="email" name="email" required className="w-full border border-hairline bg-transparent px-4 py-3 rounded outline-none focus:border-cobalt transition-colors" placeholder="you@example.com" />
                 </div>
               </div>
             </section>
@@ -77,23 +108,23 @@ function Checkout() {
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
                   <label className="block text-sm font-semibold mb-2">First name</label>
-                  <input type="text" required className="w-full border border-hairline bg-transparent px-4 py-3 rounded outline-none focus:border-cobalt transition-colors" />
+                  <input type="text" name="firstName" required className="w-full border border-hairline bg-transparent px-4 py-3 rounded outline-none focus:border-cobalt transition-colors" />
                 </div>
                 <div>
                   <label className="block text-sm font-semibold mb-2">Last name</label>
-                  <input type="text" required className="w-full border border-hairline bg-transparent px-4 py-3 rounded outline-none focus:border-cobalt transition-colors" />
+                  <input type="text" name="lastName" required className="w-full border border-hairline bg-transparent px-4 py-3 rounded outline-none focus:border-cobalt transition-colors" />
                 </div>
                 <div className="sm:col-span-2">
                   <label className="block text-sm font-semibold mb-2">Address</label>
-                  <input type="text" required className="w-full border border-hairline bg-transparent px-4 py-3 rounded outline-none focus:border-cobalt transition-colors" />
+                  <input type="text" name="address" required className="w-full border border-hairline bg-transparent px-4 py-3 rounded outline-none focus:border-cobalt transition-colors" />
                 </div>
                 <div>
                   <label className="block text-sm font-semibold mb-2">City</label>
-                  <input type="text" required className="w-full border border-hairline bg-transparent px-4 py-3 rounded outline-none focus:border-cobalt transition-colors" />
+                  <input type="text" name="city" required className="w-full border border-hairline bg-transparent px-4 py-3 rounded outline-none focus:border-cobalt transition-colors" />
                 </div>
                 <div>
                   <label className="block text-sm font-semibold mb-2">Postal code</label>
-                  <input type="text" required className="w-full border border-hairline bg-transparent px-4 py-3 rounded outline-none focus:border-cobalt transition-colors" />
+                  <input type="text" name="postalCode" required className="w-full border border-hairline bg-transparent px-4 py-3 rounded outline-none focus:border-cobalt transition-colors" />
                 </div>
               </div>
             </section>

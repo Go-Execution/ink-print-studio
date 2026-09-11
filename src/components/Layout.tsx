@@ -1,9 +1,10 @@
 import { useState, ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
-import { Menu, X, ShoppingCart } from "lucide-react";
+import { Menu, X, ShoppingCart, User as UserIcon } from "lucide-react";
 import { TopBar } from "./TopBar";
 import { CartSheet } from "./CartSheet";
 import { useCart } from "@/lib/CartContext";
+import { useAuth } from "@/lib/AuthContext";
 
 const NAV = [
   { label: "Shop", href: "/shop" },
@@ -14,6 +15,7 @@ const NAV = [
 export function Layout({ children }: { children: ReactNode }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const { cartCount, setIsCartOpen } = useCart();
+  const { user, isAdmin } = useAuth();
 
   return (
     <div className="min-h-screen bg-bg text-ink flex flex-col">
@@ -41,9 +43,23 @@ export function Layout({ children }: { children: ReactNode }) {
                 </Link>
               </li>
             ))}
+            {isAdmin && (
+              <li>
+                <Link to="/admin" className="spec text-cobalt transition-colors hover:text-ink font-bold">
+                  Admin
+                </Link>
+              </li>
+            )}
           </ul>
 
           <div className="flex items-center gap-4">
+            <Link
+              to={user ? "/profile" : "/login"}
+              className="p-2 text-ink hover:text-cobalt transition-colors flex items-center gap-2"
+              aria-label={user ? "Profile" : "Sign In"}
+            >
+              <UserIcon size={22} />
+            </Link>
             <button
               type="button"
               onClick={() => setIsCartOpen(true)}

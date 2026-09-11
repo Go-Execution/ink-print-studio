@@ -1,31 +1,43 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, useLoaderData } from "@tanstack/react-router";
 import {
   Check,
   Clock3,
   Layers,
   ShieldCheck,
   ArrowRight,
+  Star,
+  CheckCircle2,
 } from "lucide-react";
-import { InkPicker } from "@/components/udc/InkPicker";
 import { Reveal } from "@/components/udc/Reveal";
-
+import { ProductCarousel } from "@/components/udc/ProductCarousel";
+import { INITIAL_PRODUCTS, getProducts } from "@/lib/products";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 export const Route = createFileRoute("/")({
+  loader: async () => {
+    return await getProducts();
+  },
   head: () => ({
     meta: [
-      { title: "Unique Design Custom — Custom Printed Tees & Mugs" },
+      { title: "Unique Design Custom — Trendy Printed Tees & Mugs" },
       {
         name: "description",
         content:
-          "Upload any design, preview it in your ink colour, and get custom tees and mugs printed and shipped in days. No minimum order.",
+          "Shop our exclusive collection of printed tees and mugs. Unique designs, premium quality, fast delivery.",
       },
       {
         property: "og:title",
-        content: "Unique Design Custom — Custom Printed Tees & Mugs",
+        content: "Unique Design Custom — Trendy Printed Tees & Mugs",
       },
       {
         property: "og:description",
         content:
-          "Your design, printed the way you drew it. Custom t-shirts and coffee mugs with no minimum order.",
+          "Shop our exclusive collection of printed tees and mugs. Unique designs, premium quality, fast delivery.",
       },
     ],
   }),
@@ -35,44 +47,44 @@ export const Route = createFileRoute("/")({
 const STEPS = [
   {
     n: "01",
-    title: "Upload your design",
-    body: "Drop in a PNG, JPG or vector file. Logos, drawings, photos, inside jokes — anything you own the rights to.",
+    title: "Browse Designs",
+    body: "Explore our exclusive collection of hand-picked artwork and premium apparel.",
   },
   {
     n: "02",
-    title: "Preview & pick your colours",
-    body: "See your artwork on the product before you buy. Swap ink colours and garment shades until it looks right.",
+    title: "Pick Your Fit",
+    body: "Choose your preferred apparel style, size, and your favorite color.",
   },
   {
     n: "03",
-    title: "We print & ship",
-    body: "Your order goes to press the next working day and lands on your doorstep in three to five days.",
+    title: "Fast Delivery",
+    body: "Your order is packed securely and shipped right to your door.",
   },
 ];
 
 const FEATURES = [
-  { icon: Layers, label: "Print that survives the wash", meta: "60+ washes" },
-  { icon: Check, label: "No minimum order", meta: "Order 1 or 100" },
-  { icon: Clock3, label: "Printed & shipped in days", meta: "3–5 days" },
-  { icon: ShieldCheck, label: "Reprint or refund, no argument", meta: "Guaranteed" },
+  { icon: Layers, label: "Durable Print", meta: "60+ washes" },
+  { icon: Check, label: "No Minimums", meta: "Order 1 or 100" },
+  { icon: Clock3, label: "Fast Shipping", meta: "3–5 days" },
+  { icon: ShieldCheck, label: "Satisfaction", meta: "Guaranteed" },
 ];
 
 const REVIEWS = [
   {
     quote:
-      "I sent over a rough sketch my daughter drew and it came back looking like proper merch. She hasn't taken it off since.",
+      "I sent over a rough sketch and it came back looking like proper merch. Perfect quality.",
     name: "Sarah R.",
-    order: "Custom tee, 1 piece",
+    order: "Graphic tee, 1 piece",
   },
   {
     quote:
-      "Twelve mugs for the team, ordered on a Monday, on desks by Thursday. The logo colour matched our brand exactly.",
+      "Twelve mugs for the team, ordered on Monday, delivered by Thursday. Highly recommended.",
     name: "Marcus D.",
-    order: "Custom mugs for his team",
+    order: "Coffee mugs for his team",
   },
   {
     quote:
-      "We did shirts for a 40-person charity run. No minimum meant we could add three late signups without a fuss.",
+      "No minimum meant we could add three late signups without a fuss for our charity run.",
     name: "Priya N.",
     order: "Event tees, 43 pieces",
   },
@@ -88,6 +100,7 @@ function SectionLabel({ children }: { children: string }) {
 }
 
 function Index() {
+  const products = Route.useLoaderData();
   const navigate = useNavigate();
 
   const start = () => {
@@ -97,37 +110,67 @@ function Index() {
   return (
     <div className="bg-bg text-ink">
       {/* HERO */}
-      <section className="mx-auto max-w-6xl px-5 pb-16 pt-12 sm:pt-20">
-        <div className="grid items-center gap-12 lg:grid-cols-[1fr_1fr] lg:gap-16">
+      <section className="relative w-full h-[85vh] min-h-[600px] flex items-center bg-ink">
+        {/* Background Image */}
+        <div className="absolute inset-0 z-0">
+          <img 
+            src="/hero_bg.jpg" 
+            alt="Hero Background" 
+            className="w-full h-full object-cover object-[75%_center] lg:object-center"
+          />
+          {/* Dark overlay for mobile, gradient for desktop */}
+          <div className="absolute inset-0 bg-black/60 lg:bg-transparent lg:bg-gradient-to-r lg:from-black/90 lg:via-black/50 lg:to-transparent"></div>
+        </div>
+
+        <div className="relative z-10 mx-auto w-full max-w-6xl px-5">
           <Reveal>
-            <SectionLabel>Job ticket / No. 0001</SectionLabel>
-            <h1 className="mt-6 text-[clamp(2.75rem,10vw,5.25rem)]">
-              Your design,
-              <br />
-              printed the way
-              <br />
-              <span className="text-cobalt">you drew it.</span>
+            <h1 className="text-white font-display text-[clamp(4rem,12vw,8rem)] leading-[0.90] uppercase ">
+              WEAR THE<br/>WORD.
             </h1>
-            <p className="mt-6 max-w-md text-base leading-relaxed text-ink/80 sm:text-lg">
-              Custom t-shirts and coffee mugs, pressed one at a time in our shop. Upload
-              artwork, choose your ink, and we handle the rest.
+            <p className="mt-6 max-w-md text-base leading-relaxed text-white/90 sm:text-lg">
+              Exclusive t-shirts and coffee mugs, printed with care in our shop. 
+              Browse our collection, pick your favorites, and we handle the rest.
             </p>
-            <div className="mt-8 flex flex-wrap items-center gap-6">
-              <button type="button" onClick={start} className="btn btn-coral">
-                Start Designing
+            <div className="mt-10 flex flex-wrap items-center gap-4">
+              <button 
+                type="button" 
+                onClick={start} 
+                className="bg-white text-black px-8 py-4 font-bold uppercase tracking-widest text-sm hover:bg-gray-100 transition-colors"
+              >
+                Shop Collection
               </button>
               <a
                 href="#how-it-works"
-                className="spec inline-flex items-center gap-2 text-ink underline decoration-marigold decoration-2 underline-offset-8 transition-colors hover:text-cobalt"
+                className="border-2 border-white text-white px-8 py-4 font-bold uppercase tracking-widest text-sm hover:bg-white/10 transition-colors"
               >
-                See How It Works <ArrowRight size={14} />
+                Learn More
               </a>
             </div>
           </Reveal>
+        </div>
+      </section>
 
-          <Reveal delay={120}>
-            <InkPicker />
-          </Reveal>
+      <hr className="mx-auto max-w-6xl border-hairline" />
+
+      {/* BEST SELLERS */}
+      <section className="mx-auto max-w-6xl px-5 py-20">
+        <Reveal>
+          <SectionLabel>Top Picks</SectionLabel>
+        </Reveal>
+        <div className="mt-8">
+          <ProductCarousel title="Best Sellers" products={products.filter((p) => p.isBestSeller)} />
+        </div>
+      </section>
+
+      <hr className="mx-auto max-w-6xl border-hairline" />
+
+      {/* FEATURED */}
+      <section className="mx-auto max-w-6xl px-5 py-20">
+        <Reveal>
+          <SectionLabel>New & Noteworthy</SectionLabel>
+        </Reveal>
+        <div className="mt-8">
+          <ProductCarousel title="Featured Items" products={products.filter((p) => p.isFeatured)} />
         </div>
       </section>
 
@@ -137,7 +180,7 @@ function Index() {
       <section id="how-it-works" className="mx-auto max-w-6xl px-5 py-20">
         <Reveal>
           <SectionLabel>Process / Three steps</SectionLabel>
-          <h2 className="mt-5 max-w-xl text-[clamp(2rem,6vw,3.25rem)]">
+          <h2 className="mt-5 max-w-xl text-[clamp(2rem,6vw,3.25rem)] font-bold tracking-tight">
             From your screen to your hands
           </h2>
         </Reveal>
@@ -180,21 +223,44 @@ function Index() {
       {/* REVIEWS */}
       <section id="reviews" className="mx-auto max-w-6xl px-5 py-20">
         <Reveal>
-          <SectionLabel>Reviews / Verified orders</SectionLabel>
-          <h2 className="mt-5 text-[clamp(2rem,6vw,3.25rem)]">What came back</h2>
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div>
+              <SectionLabel>Customer Reviews</SectionLabel>
+              <h2 className="mt-4 text-[clamp(2rem,6vw,3.25rem)] font-bold tracking-tight leading-tight">What our customers say</h2>
+            </div>
+            <div className="flex items-center gap-4 mb-2">
+              <div className="flex items-center gap-1">
+                {[1, 2, 3, 4, 5].map((s) => (
+                  <Star key={s} className="w-6 h-6 fill-marigold text-marigold" />
+                ))}
+              </div>
+              <p className="font-bold text-xl">4.9/5 <span className="text-ink/60 text-base font-normal ml-1">(1,248 reviews)</span></p>
+            </div>
+          </div>
         </Reveal>
 
         <div className="mt-12 grid gap-6 md:grid-cols-3">
           {REVIEWS.map((r, i) => (
             <Reveal as="article" key={r.name} delay={i * 90}>
-              <figure className="ticket h-full p-6">
-                <span className="block h-1 w-10 bg-marigold" aria-hidden="true" />
-                <blockquote className="mt-5 text-base leading-relaxed text-ink/85">
-                  “{r.quote}”
-                </blockquote>
-                <figcaption className="mt-6 border-t border-hairline pt-4">
-                  <span className="block font-mono text-sm font-bold">{r.name}</span>
-                  <span className="spec mt-1 block">{r.order}</span>
+              <figure className="ticket h-full p-6 sm:p-8 flex flex-col justify-between bg-bg shadow-sm hover:shadow-md transition-shadow">
+                <div>
+                  <div className="flex items-center gap-1 mb-5">
+                    {[1, 2, 3, 4, 5].map((s) => (
+                      <Star key={s} className="w-4 h-4 fill-marigold text-marigold" />
+                    ))}
+                  </div>
+                  <blockquote className="text-base sm:text-lg leading-relaxed text-ink/90 font-medium">
+                    "{r.quote}"
+                  </blockquote>
+                </div>
+                <figcaption className="mt-8 pt-6 border-t border-hairline">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="font-bold text-ink">{r.name}</span>
+                    <span className="flex items-center gap-1.5 text-xs font-bold text-green-700 bg-green-100 px-2.5 py-1 rounded-full uppercase tracking-wider">
+                      <CheckCircle2 className="w-3.5 h-3.5" /> Verified
+                    </span>
+                  </div>
+                  <span className="text-sm text-ink/60 block">{r.order}</span>
                 </figcaption>
               </figure>
             </Reveal>
@@ -203,19 +269,46 @@ function Index() {
       </section>
 
       {/* FOOTER CTA */}
-      <section className="bg-ink text-bg">
-        <div className="mx-auto max-w-6xl px-5 py-20 text-center">
-          <Reveal>
-            <p className="spec justify-center text-marigold">Press is warm</p>
-            <h2 className="mx-auto mt-5 max-w-3xl text-[clamp(2.25rem,7vw,4.5rem)] text-bg">
-              Send us your design. We'll print it.
-            </h2>
-            <div className="mt-9 flex justify-center">
-              <button type="button" onClick={start} className="btn btn-coral">
-                Start Designing
-              </button>
-            </div>
-          </Reveal>
+      <section className="bg-ink text-bg overflow-hidden">
+        <div className="mx-auto max-w-6xl px-5 py-24">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <Reveal>
+              <p className="spec text-marigold">Limited Edition</p>
+              <h2 className="mt-5 text-[clamp(2.25rem,7vw,4.5rem)] text-bg leading-[1.1] font-display uppercase ">
+                Exclusive prints.<br/>Premium Quality.
+              </h2>
+              <div className="mt-9">
+                <button type="button" onClick={start} className="btn btn-coral px-8 py-4 uppercase tracking-widest text-sm font-bold hover:bg-coral/90 transition-colors">
+                  Shop Collection
+                </button>
+              </div>
+            </Reveal>
+
+            <Reveal delay={120}>
+              <Carousel
+                opts={{
+                  align: "start",
+                  loop: true,
+                }}
+                className="w-full max-w-md mx-auto lg:mx-0 relative"
+              >
+                <CarouselContent>
+                  {products.slice(0, 4).map((p: any) => (
+                    <CarouselItem key={p.id}>
+                      <img
+                        src={p.img}
+                        alt={p.title}
+                        className="aspect-square w-full object-cover border border-bg/20"
+                        loading="lazy"
+                      />
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                <CarouselPrevious className="absolute left-2 md:-left-12 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 border-white/20 text-white" />
+                <CarouselNext className="absolute right-2 md:-right-12 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 border-white/20 text-white" />
+              </Carousel>
+            </Reveal>
+          </div>
         </div>
       </section>
     </div>
