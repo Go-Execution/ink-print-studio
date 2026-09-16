@@ -25,11 +25,8 @@ export function Layout({ children }: { children: ReactNode }) {
           aria-label="Main"
           className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-4"
         >
-          <Link to="/" className="flex items-baseline gap-2">
-            <span className="font-display text-2xl uppercase sm:text-3xl">
-              Unique Design
-            </span>
-            <span className="spec hidden text-cobalt sm:inline text-lg">Custom</span>
+          <Link to="/" className="flex items-center gap-2">
+            <img src="/logo.png" alt="Unique Design Custom Logo" className="h-[120px] w-auto sm:h-[180px]" />
           </Link>
 
           <ul className="hidden items-center gap-8 md:flex">
@@ -109,8 +106,8 @@ export function Layout({ children }: { children: ReactNode }) {
       <footer className="bg-ink text-bg/70 mt-auto">
         <div className="mx-auto flex max-w-6xl flex-col gap-6 border-t border-bg/15 px-5 py-10 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p className="font-display text-lg uppercase text-bg">Unique Design Custom</p>
-            <p className="spec mt-2 text-bg/60">Printed to order since 2019</p>
+            <img src="/logo.png" alt="Unique Design Custom Logo" className="h-36 w-auto" />
+            <p className="spec mt-4 text-bg/60">Printed to order since 2019</p>
           </div>
           <ul className="flex flex-wrap gap-x-6 gap-y-2">
             {["hello@uniquedesigncustom.com", "Instagram", "TikTok", "Shipping & Returns"].map(
