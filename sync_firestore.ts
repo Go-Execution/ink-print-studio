@@ -40,6 +40,21 @@ const products = [
     isFeatured: true,
   },
   {
+    id: "aint-the-lord-alright-tote-bag",
+    img: "/products/tote-bag.jpeg",
+    alt: "Ain't the Lord Alright Tote Bag",
+    eyebrow: "100% Canvas / Heavy Duty",
+    title: "Ain't the Lord Alright Tote Bag",
+    price: 24,
+    unit: "/ per bag",
+    body: "Heavyweight premium canvas tote bag with reinforced handles, featuring the signature 'Ain't the Lord Alright' graphic print on an elegant marble textured finish.",
+    colors: ["Natural"],
+    sizes: ["One Size"],
+    category: "Bags",
+    isBestSeller: true,
+    isFeatured: true,
+  },
+  {
     id: "always-bet-on-yourself",
     img: "/products/always-bet-on-yourself/1.jpeg",
     alt: "Always Bet on Yourself T-Shirt",
@@ -53,7 +68,22 @@ const products = [
     category: "T-Shirt",
     isBestSeller: true,
     isFeatured: true,
-  }
+  },
+  {
+    id: "custom-mug",
+    img: "/products/mug.jpeg",
+    alt: "Classic ceramic coffee mug",
+    eyebrow: "11oz Ceramic / Dishwasher Safe",
+    title: "Classic Ceramic Mug",
+    price: 16,
+    unit: "/ per mug",
+    body: "Glossy white ceramic with a wrap-around exclusive print. Safe in the dishwasher and the microwave.",
+    colors: ["White"],
+    sizes: ["11oz", "15oz"],
+    category: "Mug",
+    isBestSeller: false,
+    isFeatured: true,
+  },
 ];
 
 async function sync() {

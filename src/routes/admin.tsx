@@ -18,7 +18,7 @@ function AdminDashboard() {
   const [activeTab, setActiveTab] = useState("orders");
   
   // New Product Form State
-  const [newProduct, setNewProduct] = useState({ name: "", price: "", description: "" });
+  const [newProduct, setNewProduct] = useState({ name: "", price: "", description: "", category: "T-Shirt" });
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -111,15 +111,21 @@ function AdminDashboard() {
       // 2. Add to Firestore
       await addDoc(collection(db, "products"), {
         name: newProduct.name,
+        title: newProduct.name,
         price: parseFloat(newProduct.price),
         description: newProduct.description,
+        body: newProduct.description,
         image: imageUrl,
-        colors: ["Black", "White"], // Default placeholders, could be expanded
-        sizes: ["S", "M", "L", "XL"]
+        img: imageUrl,
+        category: newProduct.category || "T-Shirt",
+        colors: newProduct.category === "Bags" ? ["Natural"] : ["Black", "White"],
+        sizes: newProduct.category === "Bags" ? ["One Size"] : ["S", "M", "L", "XL"],
+        isFeatured: true,
+        isBestSeller: false,
       });
 
       // Reset form
-      setNewProduct({ name: "", price: "", description: "" });
+      setNewProduct({ name: "", price: "", description: "", category: "T-Shirt" });
       setImageFile(null);
       if (fileInputRef.current) fileInputRef.current.value = "";
       alert("Product added successfully!");
@@ -199,23 +205,15 @@ function AdminDashboard() {
                       <td className="p-4 align-top">
                         <p className="font-semibold">{order.customer?.firstName} {order.customer?.lastName}</p>
                         <p className="text-sm text-ink/70">{order.customer?.email}</p>
-                        <p className="text-sm text-ink/70 mt-2">
-                          {order.customer?.address},<br/>
-                          {order.customer?.city}, {order.customer?.postalCode}
-                        </p>
                       </td>
-                      <td className="p-4 align-top min-w-[250px]">
-                        <div className="space-y-3">
+                      <td className="p-4 align-top">
+                        <ul className="text-sm space-y-1">
                           {order.items?.map((item: any, idx: number) => (
-                            <div key={idx} className="flex gap-3 text-sm">
-                              <img src={item.image} alt="" className="w-10 h-10 object-cover rounded bg-hairline/50" />
-                              <div>
-                                <p className="font-medium">{item.name}</p>
-                                <p className="text-ink/60">Qty: {item.quantity} | {item.color} | {item.size}</p>
-                              </div>
-                            </div>
+                            <li key={idx}>
+                              {item.quantity}x {item.name} {item.size && `(${item.size})`} {item.color && `- ${item.color}`}
+                            </li>
                           ))}
-                        </div>
+                        </ul>
                       </td>
                       <td className="p-4 align-top text-right">
                         <p className="font-mono font-bold">${order.total?.toFixed(2)}</p>
@@ -269,6 +267,18 @@ function AdminDashboard() {
                   <input required type="text" value={newProduct.name} onChange={e => setNewProduct({...newProduct, name: e.target.value})} className="w-full border border-hairline p-2 rounded bg-white" />
                 </div>
                 <div>
+                  <label className="block text-sm font-semibold mb-1">Category</label>
+                  <select 
+                    value={newProduct.category} 
+                    onChange={e => setNewProduct({...newProduct, category: e.target.value})} 
+                    className="w-full border border-hairline p-2 rounded bg-white"
+                  >
+                    <option value="T-Shirt">T-Shirt</option>
+                    <option value="Bags">Bags</option>
+                    <option value="Mug">Mug</option>
+                  </select>
+                </div>
+                <div>
                   <label className="block text-sm font-semibold mb-1">Price ($)</label>
                   <input required type="number" step="0.01" value={newProduct.price} onChange={e => setNewProduct({...newProduct, price: e.target.value})} className="w-full border border-hairline p-2 rounded bg-white" />
                 </div>
@@ -303,13 +313,16 @@ function AdminDashboard() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {products.map(product => (
                   <div key={product.id} className="border border-hairline rounded p-4 flex gap-4 bg-white items-start">
-                    <img src={product.image} alt={product.name} className="w-20 h-24 object-cover bg-hairline/20 rounded" />
+                    <img src={product.image || product.img} alt={product.name || product.title} className="w-20 h-24 object-cover bg-hairline/20 rounded" />
                     <div className="flex-1">
-                      <h3 className="font-bold">{product.name}</h3>
-                      <p className="text-ink/60 text-sm mb-2">${product.price}</p>
-                      <button onClick={() => handleDeleteProduct(product.id)} className="text-red-500 text-sm flex items-center gap-1 hover:text-red-600">
-                        <Trash2 className="w-4 h-4" /> Delete
-                      </button>
+                      <h3 className="font-bold">{product.name || product.title}</h3>
+                      <p className="text-ink/60 text-sm mb-1">${product.price}</p>
+                      <span className="text-xs bg-hairline/30 px-2 py-0.5 rounded font-mono inline-block mb-2">{product.category || "T-Shirt"}</span>
+                      <div>
+                        <button onClick={() => handleDeleteProduct(product.id)} className="text-red-500 text-sm flex items-center gap-1 hover:text-red-600">
+                          <Trash2 className="w-4 h-4" /> Delete
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ))}

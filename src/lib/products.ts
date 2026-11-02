@@ -26,6 +26,8 @@ export const COLOR_HEX_MAP: Record<string, string> = {
   'Mint': '#96dcB4',
   'Coral': '#e6645a',
   'Lime': '#96d232',
+  'Natural': '#f2eee6',
+  'Marble': '#eae7e1',
 };
 
 export const getHexForColorName = (colorName: string): string => {
@@ -54,7 +56,7 @@ export type Product = {
   body: string;
   colors: (string | ProductColor)[];
   sizes: string[];
-  category: "T-Shirt" | "Mug";
+  category: "T-Shirt" | "Mug" | "Bags" | string;
   isFeatured?: boolean;
   isBestSeller?: boolean;
 };
@@ -72,6 +74,21 @@ export const INITIAL_PRODUCTS: Product[] = [
     colors: T_SHIRT_COLORS,
     sizes: ["S", "M", "L", "XL"],
     category: "T-Shirt",
+    isBestSeller: true,
+    isFeatured: true,
+  },
+  {
+    id: "aint-the-lord-alright-tote-bag",
+    img: "/products/tote-bag.jpeg",
+    alt: "Ain't the Lord Alright Tote Bag",
+    eyebrow: "100% Canvas / Heavy Duty",
+    title: "Ain't the Lord Alright Tote Bag",
+    price: 24,
+    unit: "/ per bag",
+    body: "Heavyweight premium canvas tote bag with reinforced handles, featuring the signature 'Ain't the Lord Alright' graphic print on an elegant marble textured finish.",
+    colors: ["Natural"],
+    sizes: ["One Size"],
+    category: "Bags",
     isBestSeller: true,
     isFeatured: true,
   },
@@ -117,8 +134,36 @@ export const getProducts = async (): Promise<Product[]> => {
     if (snapshot.empty) {
       return INITIAL_PRODUCTS; // Fallback for before seeding
     }
-    const products = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Product));
-    return products;
+    const firestoreProducts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Product));
+
+    // Ensure any initial products (like newly added Bags) are included even if Firestore hasn't synced yet
+    const productMap = new Map<string, Product>();
+    for (const p of INITIAL_PRODUCTS) {
+      productMap.set(p.id, p);
+    }
+    for (const p of firestoreProducts) {
+      const normalized: Product = {
+        ...p,
+        img: p.img || (p as any).image,
+        title: p.title || (p as any).name,
+        body: p.body || (p as any).description,
+        category: p.category || "T-Shirt",
+        colors: p.colors || ["Natural"],
+        sizes: p.sizes || ["One Size"],
+      };
+      productMap.set(p.id, normalized);
+    }
+
+    const merged = Array.from(productMap.values());
+    // Ensure 'Ain't the Lord Alright' is the front staple product
+    merged.sort((a, b) => {
+      if (a.id === "aint-the-lord-alright") return -1;
+      if (b.id === "aint-the-lord-alright") return 1;
+      if (a.id === "aint-the-lord-alright-tote-bag") return -1;
+      if (b.id === "aint-the-lord-alright-tote-bag") return 1;
+      return 0;
+    });
+    return merged;
   } catch (error) {
     console.error("Error fetching products:", error);
     return INITIAL_PRODUCTS; // Fallback on error
@@ -130,7 +175,15 @@ export const getProductById = async (id: string): Promise<Product | undefined> =
     const docRef = doc(db, "products", id);
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
-      return { id: docSnap.id, ...docSnap.data() } as Product;
+      const data = docSnap.data();
+      return {
+        id: docSnap.id,
+        ...data,
+        img: data['img'] || data['image'],
+        title: data['title'] || data['name'],
+        body: data['body'] || data['description'],
+        category: data['category'] || "T-Shirt",
+      } as Product;
     }
     return INITIAL_PRODUCTS.find(p => p.id === id);
   } catch (error) {

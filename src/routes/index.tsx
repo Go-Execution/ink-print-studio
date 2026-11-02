@@ -1,16 +1,15 @@
-import { createFileRoute, useNavigate, useLoaderData } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import {
   Check,
   Clock3,
   Layers,
   ShieldCheck,
-  ArrowRight,
   Star,
   CheckCircle2,
 } from "lucide-react";
 import { Reveal } from "@/components/udc/Reveal";
 import { ProductCarousel } from "@/components/udc/ProductCarousel";
-import { INITIAL_PRODUCTS, getProducts } from "@/lib/products";
+import { getProducts } from "@/lib/products";
 import {
   Carousel,
   CarouselContent,
@@ -24,20 +23,20 @@ export const Route = createFileRoute("/")({
   },
   head: () => ({
     meta: [
-      { title: "Unique Design Custom — Trendy Printed Tees & Mugs" },
+      { title: "Unique Design Custom — Trendy Printed Tees, Bags & Mugs" },
       {
         name: "description",
         content:
-          "Shop our exclusive collection of printed tees and mugs. Unique designs, premium quality, fast delivery.",
+          "Shop our exclusive collection of printed tees, tote bags, and mugs. Unique designs, premium quality, fast delivery.",
       },
       {
         property: "og:title",
-        content: "Unique Design Custom — Trendy Printed Tees & Mugs",
+        content: "Unique Design Custom — Trendy Printed Tees, Bags & Mugs",
       },
       {
         property: "og:description",
         content:
-          "Shop our exclusive collection of printed tees and mugs. Unique designs, premium quality, fast delivery.",
+          "Shop our exclusive collection of printed tees, tote bags, and mugs. Unique designs, premium quality, fast delivery.",
       },
     ],
   }),
@@ -128,7 +127,7 @@ function Index() {
               WEAR THE<br/>WORD.
             </h1>
             <p className="mt-6 max-w-md text-base leading-relaxed text-white/90 sm:text-lg">
-              Exclusive t-shirts and coffee mugs, printed with care in our shop. 
+              Exclusive t-shirts, tote bags, and coffee mugs, printed with care in our shop. 
               Browse our collection, pick your favorites, and we handle the rest.
             </p>
             <div className="mt-10 flex flex-wrap items-center gap-4">

@@ -1,11 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState, useEffect } from "react";
-import { Filter, X } from "lucide-react";
+import { useState } from "react";
+import { Filter } from "lucide-react";
 
 import { useCart } from "@/lib/CartContext";
 
-import { INITIAL_PRODUCTS, getProducts, type Product } from "@/lib/products";
-import { ProductCarousel } from "@/components/udc/ProductCarousel";
+import { getProducts, type Product } from "@/lib/products";
 import { ProductHoverSlider } from "@/components/udc/ProductHoverSlider";
 
 export const Route = createFileRoute("/shop")({
@@ -55,7 +54,7 @@ function Shop() {
     });
   };
 
-  const categories = ["All", "T-Shirt", "Mug"];
+  const categories = ["All", "T-Shirt", "Bags", "Mug"];
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const [maxPrice, setMaxPrice] = useState<number>(100);
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
@@ -74,7 +73,7 @@ function Shop() {
         <div>
           <h1 className="text-4xl font-bold tracking-tight">Shop</h1>
           <p className="mt-2 md:mt-4 text-ink/70 max-w-2xl text-lg">
-            Browse our collection of uniquely designed tees and mugs.
+            Browse our collection of uniquely designed tees, bags, and mugs.
           </p>
         </div>
         
@@ -103,7 +102,9 @@ function Shop() {
                     onChange={() => setSelectedCategory(cat)}
                     className="accent-coral w-4 h-4"
                   />
-                  <span className="text-ink/80 group-hover:text-ink transition-colors">{cat === "All" ? "All Products" : cat + "s"}</span>
+                  <span className="text-ink/80 group-hover:text-ink transition-colors">
+                    {cat === "All" ? "All Products" : cat === "T-Shirt" ? "T-Shirts" : cat === "Mug" ? "Mugs" : cat}
+                  </span>
                 </label>
               ))}
             </div>
